@@ -234,7 +234,7 @@ The formats that support the `sort` option:
 
 - [css/variables](/reference/hooks/formats/predefined/#cssvariables)
 - [scss/variables](/reference/hooks/formats/predefined/#scssvariables)
-- [scss/map-deep](/reference/hooks/formats/predefined/#scssmapdeep)
+- [scss/map-deep](/reference/hooks/formats/predefined/#scssmap-deep)
 - [less/variables](/reference/hooks/formats/predefined/#lessvariables)
 - [stylus/variables](/reference/hooks/formats/predefined/#stylusvariables)
 
