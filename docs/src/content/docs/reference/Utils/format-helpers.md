@@ -14,7 +14,7 @@ import { propertyFormatNames } from 'style-dictionary/enums';
 StyleDictionary.registerFormat({
   name: 'myCustomFormat',
   format: async ({ dictionary, file, options }) => {
-    const { outputReferences } = options;
+    const { outputReferences, sort } = options;
     const header = await fileHeader({ file });
     return (
       header +
@@ -23,6 +23,7 @@ StyleDictionary.registerFormat({
         format: propertyFormatNames.css,
         dictionary,
         outputReferences,
+        sort, // 'name' | 'reference' | ['reference','name'] | (a, b) => number
       }) +
       '\n}\n'
     );
@@ -117,18 +118,19 @@ and not wanting to create redundant git diffs just because of the timestamp chan
 
 This is used to create lists of variables like Sass variables or CSS custom properties
 
-| Param                                 | Type                                  | Description                                                                                                                                                                                                    |
-| ------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `options`                             | `Object`                              |                                                                                                                                                                                                                |
-| `options.format`                      | `string`                              | What type of variables to output. Options are: `'css'`, `'sass'`, `'less'`, and `'stylus'`.                                                                                                                    |
-| `options.dictionary`                  | `Dictionary`                          | Transformed Dictionary object containing `allTokens`, `tokens` and `unfilteredTokens`.                                                                                                                         |
-| `options.dictionary.allTokens`        | `TransformedToken[]`                  | Flattened array of all tokens, easiest to loop over and export to a flat format.                                                                                                                               |
-| `options.dictionary.tokens`           | `TransformedTokens`                   | All tokens, still in unflattened object format.                                                                                                                                                                |
-| `options.dictionary.unfilteredTokens` | `TransformedTokens`                   | All tokens, still in unflattened object format, including tokens that were filtered out by filters.                                                                                                            |
-| `options.outputReferences`            | `boolean \| OutputReferencesFunction` | Whether or not to output references. You will want to pass this from the `options` object sent to the format function. Also allows passing a function to conditionally output references on a per token basis. |
-| `options.formatting`                  | `Object`                              | Custom formatting properties that define parts of a comment in code. The configurable strings are: `prefix`, `lineSeparator`, `header`, and `footer`.                                                          |
-| `options.themeable`                   | `boolean`                             | Whether tokens should default to being themeable. Defaults to `false`.                                                                                                                                         |
-| `options.usesDtcg`                    | `boolean`                             | Whether tokens use the DTCG standard. Defaults to `false`                                                                                                                                                      |
+| Param                                 | Type                                                                                     | Description                                                                                                                                                                                                    |
+| ------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `options`                             | `Object`                                                                                 |                                                                                                                                                                                                                |
+| `options.format`                      | `string`                                                                                 | What type of variables to output. Options are: `'css'`, `'sass'`, `'less'`, and `'stylus'`.                                                                                                                    |
+| `options.dictionary`                  | `Dictionary`                                                                             | Transformed Dictionary object containing `allTokens`, `tokens` and `unfilteredTokens`.                                                                                                                         |
+| `options.dictionary.allTokens`        | `TransformedToken[]`                                                                     | Flattened array of all tokens, easiest to loop over and export to a flat format.                                                                                                                               |
+| `options.dictionary.tokens`           | `TransformedTokens`                                                                      | All tokens, still in unflattened object format.                                                                                                                                                                |
+| `options.dictionary.unfilteredTokens` | `TransformedTokens`                                                                      | All tokens, still in unflattened object format, including tokens that were filtered out by filters.                                                                                                            |
+| `options.outputReferences`            | `boolean \| OutputReferencesFunction`                                                    | Whether or not to output references. You will want to pass this from the `options` object sent to the format function. Also allows passing a function to conditionally output references on a per token basis. |
+| `options.formatting`                  | `Object`                                                                                 | Custom formatting properties that define parts of a comment in code. The configurable strings are: `prefix`, `lineSeparator`, `header`, and `footer`.                                                          |
+| `options.themeable`                   | `boolean`                                                                                | Whether tokens should default to being themeable. Defaults to `false`.                                                                                                                                         |
+| `options.usesDtcg`                    | `boolean`                                                                                | Whether tokens use the DTCG standard. Defaults to `false`                                                                                                                                                      |
+| `options.sort`                        | `'name' \| 'reference' \| ('name' \| 'reference')[] \| ((a: Token, b: Token) => number)` | Optional sorting strategy. Use `'name'` to sort by token name, `'reference'` to sort by reference dependencies, an array to apply multiple sorters, or a custom comparator function. Defaults to no sorting.   |
 
 Example:
 
@@ -142,6 +144,7 @@ StyleDictionary.registerFormat({
       format: propertyFormatNames.less,
       dictionary,
       outputReferences: options.outputReferences,
+      sort: options.sort,
     });
   },
 });

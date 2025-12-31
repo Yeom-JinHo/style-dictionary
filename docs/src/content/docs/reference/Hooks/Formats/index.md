@@ -196,6 +196,48 @@ In this scenario, it's often preferable not to output a reference.
 
 There is an [`outputReferencesTransformed`](/reference/utils/references/#outputreferencestransformed) utility function that takes care of checking if this happened and not outputting refs for tokens in this scenario.
 
+## Sorting variables
+
+Variable-based formats (CSS, SCSS, LESS, and Stylus variables) support a `sort` option to control the ordering of variables in the output. This is useful for organizing your tokens in a specific order.
+
+The `sort` option accepts:
+
+- `'name'` - Sort tokens alphabetically by name
+- `'reference'` - Sort tokens by reference dependencies (ensures referenced tokens are defined before they are used)
+- An array of sorters like `['reference', 'name']` - Apply multiple sorters in sequence
+- A custom comparator function `(a, b) => number` - Use your own sorting logic
+
+```json
+// config.json
+{
+  "source": ["tokens.json"],
+  "platforms": {
+    "css": {
+      "transformGroup": "css",
+      "files": [
+        {
+          "destination": "variables.css",
+          "format": "css/variables",
+          "options": {
+            "sort": "name"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+When using `outputReferences: true`, the `'reference'` sorter is automatically applied first to ensure proper define-before-use ordering, and any user-provided sorters act as tie-breakers.
+
+The formats that support the `sort` option:
+
+- [css/variables](/reference/hooks/formats/predefined/#cssvariables)
+- [scss/variables](/reference/hooks/formats/predefined/#scssvariables)
+- [scss/map-deep](/reference/hooks/formats/predefined/#scssmapdeep)
+- [less/variables](/reference/hooks/formats/predefined/#lessvariables)
+- [stylus/variables](/reference/hooks/formats/predefined/#stylusvariables)
+
 ## File headers
 
 By default Style Dictionary adds a file header comment in the top of files built using built-in formats like this:
