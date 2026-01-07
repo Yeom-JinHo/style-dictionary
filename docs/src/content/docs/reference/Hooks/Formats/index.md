@@ -203,8 +203,7 @@ Variable-based formats (CSS, SCSS, LESS, and Stylus variables) support a `sort` 
 The `sort` option accepts:
 
 - `'name'` - Sort tokens alphabetically by name
-- `'reference'` - Sort tokens by reference dependencies (ensures referenced tokens are defined before they are used)
-- An array of sorters like `['reference', 'name']` - Apply multiple sorters in sequence
+- An array of sorters like `['name']` - Apply multiple sorters in sequence
 - A custom comparator function `(a, b) => number` - Use your own sorting logic
 
 ```json
@@ -228,7 +227,7 @@ The `sort` option accepts:
 }
 ```
 
-When using `outputReferences: true`, the `'reference'` sorter is automatically applied first to ensure proper define-before-use ordering, and any user-provided sorters act as tie-breakers.
+When using `outputReferences: true`, reference-safe ordering is automatically applied first to ensure proper define-before-use ordering, and any user-provided sorters act as tie-breakers.
 
 The formats that support the `sort` option:
 
