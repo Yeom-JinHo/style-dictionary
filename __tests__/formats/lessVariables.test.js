@@ -166,7 +166,7 @@ describe('formats', () => {
       }
       await _less.render(result);
     });
-    it('should accept sort as an array (e.g. ["reference", "name"])', async () => {
+    it('should accept sort as an array (e.g. ["name"])', async () => {
       const tokensWithRef = {
         color: {
           semantic: {
@@ -194,7 +194,7 @@ describe('formats', () => {
         ...file,
         options: {
           outputReferences: true,
-          sort: ['reference', 'name'],
+          sort: ['name'],
         },
       };
 

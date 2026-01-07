@@ -181,44 +181,48 @@ describe('formats', () => {
       compileString(result); // still valid SCSS
     });
 
-    it('should accept sort as an array (e.g. ["reference", "name"])', async () => {
-      const tokensWithRef = {
+    it('should accept sort as an array and chain as tie-breakers (custom -> name)', async () => {
+      const tokensForChain = {
         color: {
-          semantic: {
-            primary: {
-              name: 'b-semantic',
-              value: '{color.base.red.400.value}',
-              original: { value: '{color.base.red.400.value}' },
-              path: ['color', 'semantic', 'primary'],
-            },
+          // same value => custom sorter returns 0, so "name" decides order
+          a: {
+            name: 'z-same',
+            value: '#000000',
+            original: { value: '#000000' },
+            path: ['color', 'a'],
           },
-          base: {
-            red: {
-              400: {
-                name: 'a-base',
-                value: '#EF5350',
-                original: { value: '#EF5350' },
-                path: ['color', 'base', 'red', '400'],
-              },
-            },
+          b: {
+            name: 'a-same',
+            value: '#000000',
+            original: { value: '#000000' },
+            path: ['color', 'b'],
+          },
+          // different value => custom sorter decides regardless of name
+          c: {
+            name: 'm-diff',
+            value: '#111111',
+            original: { value: '#111111' },
+            path: ['color', 'c'],
           },
         },
       };
 
+      // primary sorter: value
+      const byValue = (t1, t2) => String(t1.value).localeCompare(String(t2.value));
+
       const fileWithArraySort = {
         ...file,
         options: {
-          outputReferences: true,
-          sort: ['reference', 'name'],
+          sort: [byValue, 'name'],
         },
       };
 
       const result = await format(
         createFormatArgs({
           dictionary: {
-            tokens: tokensWithRef,
-            unfilteredTokens: tokensWithRef,
-            allTokens: convertTokenData(tokensWithRef, { output: 'array' }),
+            tokens: tokensForChain,
+            unfilteredTokens: tokensForChain,
+            allTokens: convertTokenData(tokensForChain, { output: 'array' }),
           },
           file: fileWithArraySort,
           platform: {},
@@ -226,10 +230,12 @@ describe('formats', () => {
         {},
         fileWithArraySort,
       );
-
-      // still reference-safe
-      expect(result.indexOf('$a-base')).to.be.lessThan(result.indexOf('$b-semantic'));
+      // '#000000' group first; within the group, "name" sorts a-same before z-same
+      expect(result.indexOf('$a-same')).to.be.lessThan(result.indexOf('$z-same'));
+      // '#111111' should come after '#000000' regardless of name
+      expect(result.indexOf('$z-same')).to.be.lessThan(result.indexOf('$m-diff'));
       compileString(result);
+      await expect(result).to.matchSnapshot(4);
     });
   });
 });
