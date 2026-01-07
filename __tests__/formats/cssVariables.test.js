@@ -196,6 +196,7 @@ describe('formats', () => {
         },
       };
 
+      let error;
       try {
         await format(
           createFormatArgs({
@@ -210,10 +211,11 @@ describe('formats', () => {
           {},
           file,
         );
-        throw new Error('Expected an error to be thrown, but it did not throw.');
       } catch (err) {
-        expect(String(err)).to.include('Invalid "sort" option');
+        error = err;
       }
+      expect(error, 'Expected format() to throw').to.exist;
+      expect(String(error)).to.include('Invalid "sort" option');
     });
   });
 });
