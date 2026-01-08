@@ -27,15 +27,3 @@ snapshots["formats css/variables should have a valid CSS syntax and match snapsh
 `;
 /* end snapshot formats css/variables should have a valid CSS syntax and match snapshot when selector is an array 2 */
 
-snapshots["formats css/variables should sort variables by name when sort option is \"name\" 3"] = 
-`/**
- * Do not edit directly, this file was auto-generated.
- */
-
-.selector {
-  --color-a: #000000;
-  --color-z: #111111;
-}
-`;
-/* end snapshot formats css/variables should sort variables by name when sort option is "name" 3 */
-
