@@ -6,6 +6,7 @@ import type { Preprocessor } from './Preprocessor.js';
 import type { Transform } from './Transform.js';
 import type { Format, OutputReferences, SortOption } from './Format.js';
 import type { Action } from './Action.js';
+import type { Sorter } from './Sorter.js';
 import {
   logBrokenReferenceLevels,
   logWarningLevels,
@@ -25,6 +26,7 @@ export interface Hooks {
   fileHeaders?: Record<string, FileHeader>;
   filters?: Record<string, Filter['filter']>;
   actions?: Record<string, Omit<Action, 'name'>>;
+  sorters?: Record<string, Sorter['sorter']>;
 }
 
 // contains a few typed props of options that are commonly reused between multiple formats

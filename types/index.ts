@@ -39,4 +39,6 @@ export type { Preprocessor } from './Preprocessor.js';
 
 export type { Transform, NameTransform, AttributeTransform, ValueTransform } from './Transform.js';
 
+export type { Sorter, SorterFunction } from './Sorter.js';
+
 export type { Volume } from './Volume.js';
