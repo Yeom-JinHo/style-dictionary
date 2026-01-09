@@ -130,6 +130,7 @@ export default {
               ],
             },
             { label: 'Filters', link: '/reference/hooks/filters' },
+            { label: 'Sorters', link: '/reference/hooks/sorters' },
             { label: 'File Headers', link: '/reference/hooks/file-headers' },
             { label: 'Actions', link: '/reference/hooks/actions' },
           ],

@@ -14,7 +14,7 @@ import { propertyFormatNames } from 'style-dictionary/enums';
 StyleDictionary.registerFormat({
   name: 'myCustomFormat',
   format: async ({ dictionary, file, options }) => {
-    const { outputReferences, sort } = options;
+    const { outputReferences, sort, hooks } = options;
     const header = await fileHeader({ file });
     return (
       header +
@@ -23,7 +23,8 @@ StyleDictionary.registerFormat({
         format: propertyFormatNames.css,
         dictionary,
         outputReferences,
-        sort, // 'name' | ['name'] | [customFn, 'name'] | (a, b) => number
+        sort, // 'name' | 'registered-sorter-name' | [customFn, 'name'] | (a, b) => number
+        hooks, // pass hooks to enable registered sorters
       }) +
       '\n}\n'
     );
@@ -131,6 +132,7 @@ This is used to create lists of variables like Sass variables or CSS custom prop
 | `options.themeable`                   | `boolean`                             | Whether tokens should default to being themeable. Defaults to `false`.                                                                                                                                         |
 | `options.usesDtcg`                    | `boolean`                             | Whether tokens use the DTCG standard. Defaults to `false`                                                                                                                                                      |
 | `options.sort`                        | `SortOption`                          | Optional sorting strategy. Use `'name'` to sort alphabetically by token name or a custom comparator function `(a: Token, b: Token) => -1                                                                       | 1   | 0`. You can chain multiple sorters with an array of sorters (e.g., `[customFn, 'name']`). When `outputReferences`is`true`, reference-safe ordering is automatically enforced first, and your sort acts as a tie-breaker. Defaults to no sorting. |
+| `options.hooks`                       | `Hooks`                                                                                                               | Hooks object containing registered sorters. Pass `options.hooks` from the format function to enable registered sorters. Style Dictionary automatically provides this in the `options` object passed to format functions.                                                                                                                                                                                                    |
 
 Example:
 
@@ -145,9 +147,51 @@ StyleDictionary.registerFormat({
       dictionary,
       outputReferences: options.outputReferences,
       sort: options.sort,
+      hooks: options.hooks, // pass hooks to enable registered sorters
     });
   },
 });
+```
+
+Using a registered sorter:
+
+When you have registered a sorter (either via `StyleDictionary.registerSorter()` or in your config's `hooks.sorters`), you can use it by name in `formattedVariables`:
+
+```js title="build-tokens.js"
+import { formattedVariables } from 'style-dictionary/utils';
+import { propertyFormatNames } from 'style-dictionary/enums';
+
+StyleDictionary.registerFormat({
+  name: 'myCustomFormat',
+  format: function ({ dictionary, options }) {
+    // The sorter name (e.g., 'by-type') comes from options.sort
+    // The sorter must be registered in hooks.sorters
+    // (either via registerSorter() or in config)
+    return formattedVariables({
+      format: propertyFormatNames.css,
+      dictionary,
+      sort: options.sort, // Can be 'name', registered sorter name, function, or array
+      hooks: options.hooks, // pass hooks to enable registered sorters
+    });
+  },
+});
+```
+
+The sorter can be registered in your config file, and then used via `options.sort`:
+
+```js title="sd.config.js"
+export default {
+  hooks: {
+    sorters: {
+      'by-type': (a, b) => {
+        const typeCompare = (a.type || '').localeCompare(b.type || '');
+        if (typeCompare !== 0) return typeCompare;
+        return a.name.localeCompare(b.name);
+      },
+    },
+  },
+  // ... rest of config
+};
 ```
 
 ---
