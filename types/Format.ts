@@ -39,3 +39,19 @@ export interface Format {
 export type OutputReferences =
   | ((token: TransformedToken, options: { dictionary: Dictionary; usesDtcg?: boolean }) => boolean)
   | boolean;
+
+/**
+ * Built-in sort option for sorting tokens by name
+ */
+export type BuiltInSort = 'name';
+
+/**
+ * A single sort item - either a built-in sort string or a custom comparator function
+ */
+export type SortItem = BuiltInSort | ((a: TransformedToken, b: TransformedToken) => number);
+
+/**
+ * Sort option for formattedVariables - can be a single sort item or an array of sort items
+ * (for chaining multiple sorters as tie-breakers)
+ */
+export type SortOption = SortItem | SortItem[];
