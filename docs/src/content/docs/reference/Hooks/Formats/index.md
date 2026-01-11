@@ -200,11 +200,11 @@ There is an [`outputReferencesTransformed`](/reference/utils/references/#outputr
 
 Variable-based formats (CSS, SCSS, LESS, and Stylus variables) support a `sort` option to control the ordering of variables in the output. This is useful for organizing your tokens in a specific order.
 
-The `sort` option accepts:
+The `sort` option accepts one or more sorters: `Sorter | Sorter[]` where `Sorter = 'name' | (a: DesignToken, b: DesignToken) => number`.
 
 - `'name'` - Sort tokens alphabetically by name
-- An array of sorters like `['name']` - Apply multiple sorters in sequence
 - A custom comparator function `(a, b) => number` - Use your own sorting logic
+- An array of sorters `[Sorter, ...]` - Apply multiple sorters in sequence as tie-breakers
 
 ```json
 // config.json
@@ -227,7 +227,44 @@ The `sort` option accepts:
 }
 ```
 
+### Sorting with tie-breakers
+
+When you provide multiple sorters in an array, they act as **tie-breakers**: if the first sorter returns `0` (meaning the two tokens are considered equal), the next sorter is used to determine the order. This allows you to create complex sorting logic.
+
+For example, to sort tokens by value first, then by name when values are equal:
+
+```js title="build-tokens.js"
+import StyleDictionary from 'style-dictionary';
+import { formattedVariables } from 'style-dictionary/utils';
+import { propertyFormatNames } from 'style-dictionary/enums';
+
+const byValue = (a, b) => String(a.value).localeCompare(String(b.value));
+
+StyleDictionary.registerFormat({
+  name: 'css/variables-sorted',
+  format: ({ dictionary, options }) => {
+    return formattedVariables({
+      format: propertyFormatNames.css,
+      dictionary,
+      sort: [byValue, 'name'], // Sort by value first, then by name as tie-breaker
+    });
+  },
+});
+```
+
+In this example:
+
+- Tokens with different values are sorted by value (e.g., `#000000` comes before `#111111`)
+- Tokens with the same value are sorted alphabetically by name (e.g., `a-same` comes before `z-same`)
+
+### Sorting with outputReferences
+
 When using `outputReferences: true`, reference-safe ordering is automatically applied first to ensure proper define-before-use ordering, and any user-provided sorters act as tie-breakers.
+
+For example, if you have tokens where `a-token` references `d-token` and `b-token` references `c-token`, the reference-safe ordering ensures that base tokens (`c-token`, `d-token`) appear before referencing tokens (`a-token`, `b-token`). Then, your custom sorters (like `'name'`) are applied as tie-breakers:
+
+- Base tokens that don't reference each other are sorted by name
+- Referencing tokens that don't reference each other are also sorted by name
 
 The formats that support the `sort` option:
 
