@@ -128,6 +128,14 @@ describe('formatHelpers', () => {
     it('should accept sort as an array and chain as tie-breakers (custom -> name)', () => {
       const tokensForChain = {
         color: {
+          // different value => custom sorter decides regardless of name
+          // Placed first to verify it gets sorted down (would be wrong position if sorting fails)
+          c: {
+            name: 'm-diff',
+            value: '#111111',
+            original: { value: '#111111' },
+            path: ['color', 'c'],
+          },
           // same value => custom sorter returns 0, so "name" decides order
           a: {
             name: 'z-same',
@@ -140,13 +148,6 @@ describe('formatHelpers', () => {
             value: '#000000',
             original: { value: '#000000' },
             path: ['color', 'b'],
-          },
-          // different value => custom sorter decides regardless of name
-          c: {
-            name: 'm-diff',
-            value: '#111111',
-            original: { value: '#111111' },
-            path: ['color', 'c'],
           },
         },
       };
@@ -204,7 +205,8 @@ describe('formatHelpers', () => {
         allTokens: convertTokenData(tokensWithRef, { output: 'array' }),
       };
 
-      const result = formattedVariables({
+      // Test with outputReferences: true - reference-safe order takes precedence
+      const resultWithRefs = formattedVariables({
         format: css,
         dictionary,
         outputReferences: true,
@@ -212,9 +214,27 @@ describe('formatHelpers', () => {
       });
 
       // base definition must appear before the referencing token
-      expect(result.indexOf('--z-base')).to.be.lessThan(result.indexOf('--a-semantic'));
+      expect(resultWithRefs.indexOf('--z-base')).to.be.lessThan(
+        resultWithRefs.indexOf('--a-semantic'),
+      );
       // should output reference
-      expect(result).to.include('var(--z-base)');
+      expect(resultWithRefs).to.include('var(--z-base)');
+
+      // Test with outputReferences: false - name sorting should apply
+      const resultWithoutRefs = formattedVariables({
+        format: css,
+        dictionary,
+        outputReferences: false,
+        sort: 'name',
+      });
+
+      // name order should apply: a-semantic comes before z-base
+      expect(resultWithoutRefs.indexOf('--a-semantic')).to.be.lessThan(
+        resultWithoutRefs.indexOf('--z-base'),
+      );
+      // should output raw value, not reference
+      expect(resultWithoutRefs).to.include('{color.base.red.400.value}');
+      expect(resultWithoutRefs).to.not.include('var(--z-base)');
     });
 
     it('should output references when outputReferences=true and match snapshot', async () => {
