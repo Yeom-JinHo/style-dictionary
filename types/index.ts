@@ -24,7 +24,15 @@ export type { FileHeader, File, FormattingOptions } from './File.js';
 
 export type { Filter } from './Filter.js';
 
-export type { Format, FormatFnArguments, FormatFn, OutputReferences } from './Format.js';
+export type {
+  Format,
+  FormatFnArguments,
+  FormatFn,
+  OutputReferences,
+  SortOption,
+  SortItem,
+  BuiltInSort,
+} from './Format.js';
 
 export type { Parser, ParserOptions } from './Parser.js';
 
