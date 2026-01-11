@@ -105,8 +105,8 @@ describe('formatHelpers', () => {
         },
       };
 
-      // Intentionally reverse to ensure input order is NOT already alphabetical
-      const allTokensForSort = convertTokenData(tokensForSort, { output: 'array' }).reverse();
+      // convertTokenData preserves insertion order: z comes before a, so result is [z, a] (not alphabetical)
+      const allTokensForSort = convertTokenData(tokensForSort, { output: 'array' });
 
       const dictionary = {
         tokens: tokensForSort,
