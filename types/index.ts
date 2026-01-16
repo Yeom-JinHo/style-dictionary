@@ -31,7 +31,6 @@ export type {
   OutputReferences,
   SortOption,
   SortItem,
-  BuiltInSort,
 } from './Format.js';
 
 export type { Parser, ParserOptions } from './Parser.js';

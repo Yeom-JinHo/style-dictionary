@@ -25,7 +25,7 @@ StyleDictionary.registerFormat({
         format: propertyFormatNames.css,
         dictionary,
         outputReferences,
-        sort, // SortOption - see types documentation
+        sort, // SortOption - see types
       }) +
       '\n}\n'
     );

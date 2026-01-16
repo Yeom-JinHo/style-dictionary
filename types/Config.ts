@@ -4,7 +4,7 @@ import type { FileHeader, File, FormattingOverrides } from './File.js';
 import type { Parser } from './Parser.js';
 import type { Preprocessor } from './Preprocessor.js';
 import type { Transform } from './Transform.js';
-import type { Format, OutputReferences } from './Format.js';
+import type { Format, OutputReferences, SortOption } from './Format.js';
 import type { Action } from './Action.js';
 import {
   logBrokenReferenceLevels,
@@ -27,12 +27,14 @@ export interface Hooks {
   actions?: Record<string, Omit<Action, 'name'>>;
 }
 
+// contains a few typed props of options that are commonly reused between multiple formats
 export interface LocalOptions {
   showFileHeader?: boolean;
   fileHeader?: string | FileHeader;
   outputReferences?: OutputReferences;
   outputReferenceFallbacks?: boolean;
   formatting?: FormattingOverrides;
+  sort?: SortOption;
   [key: string]: any;
 }
 export interface GetReferencesOptions {

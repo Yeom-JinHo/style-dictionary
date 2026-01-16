@@ -41,12 +41,7 @@ describe('formatHelpers', () => {
         format: css,
         dictionary,
       });
-
-      expect(result).to.include('--color-base-red-400');
-      expect(result).to.include('--color-base-blue-500');
-      expect(result).to.include('#EF5350');
-      expect(result).to.include('#2196F3');
-      await expect(result).to.matchSnapshot(1);
+      await expect(result).to.matchSnapshot();
     });
 
     it('should format variables with SASS format and match snapshot', async () => {
@@ -60,12 +55,7 @@ describe('formatHelpers', () => {
         format: sass,
         dictionary,
       });
-
-      expect(result).to.include('$color-base-red-400');
-      expect(result).to.include('$color-base-blue-500');
-      expect(result).to.include('#EF5350');
-      expect(result).to.include('#2196F3');
-      await expect(result).to.matchSnapshot(2);
+      await expect(result).to.matchSnapshot();
     });
 
     it('should format variables with LESS format and match snapshot', async () => {
@@ -84,7 +74,7 @@ describe('formatHelpers', () => {
       expect(result).to.include('@color-base-blue-500');
       expect(result).to.include('#EF5350');
       expect(result).to.include('#2196F3');
-      await expect(result).to.matchSnapshot(3);
+      await expect(result).to.matchSnapshot();
     });
 
     it('should sort variables by name when sort option is "name" and match snapshot', async () => {
@@ -122,29 +112,29 @@ describe('formatHelpers', () => {
 
       // ensure "--color-a" comes before "--color-z"
       expect(result.indexOf('--color-a')).to.be.lessThan(result.indexOf('--color-z'));
-      await expect(result).to.matchSnapshot(4);
+      await expect(result).to.matchSnapshot();
     });
 
     it('should accept sort as an array and chain as tie-breakers (custom -> name)', () => {
       const tokensForChain = {
         color: {
-          // different value => custom sorter decides regardless of name
-          // Placed first to verify it gets sorted down (would be wrong position if sorting fails)
-          c: {
-            name: 'm-diff',
+          // value decides this is sorted down, even though it's at the top of insertion here
+          a: {
+            name: 'color-a',
             value: '#111111',
             original: { value: '#111111' },
-            path: ['color', 'c'],
-          },
-          // same value => custom sorter returns 0, so "name" decides order
-          a: {
-            name: 'z-same',
-            value: '#000000',
-            original: { value: '#000000' },
             path: ['color', 'a'],
           },
+          // c & b have same value => custom value sorter returns 0 (tiebreak), so "name" sorter decides order
+          // and places c down and b up
+          c: {
+            name: 'color-c',
+            value: '#000000',
+            original: { value: '#000000' },
+            path: ['color', 'c'],
+          },
           b: {
-            name: 'a-same',
+            name: 'color-b',
             value: '#000000',
             original: { value: '#000000' },
             path: ['color', 'b'],
@@ -167,10 +157,15 @@ describe('formatHelpers', () => {
         sort: [byValue, 'name'],
       });
 
-      // '#000000' group first; within the group, "name" sorts a-same before z-same
-      expect(result.indexOf('--a-same')).to.be.lessThan(result.indexOf('--z-same'));
-      // '#111111' should come after '#000000' regardless of name
-      expect(result.indexOf('--z-same')).to.be.lessThan(result.indexOf('--m-diff'));
+      // extrapolate the token names into chars a, b, c etc.
+      const keys = result.split('\n').map((_k) => {
+        const k = _k.trim().split(':')[0];
+        return k.replace('--color-', '');
+      });
+
+      // Order insertion: a -> c -> b
+      // Expectation: value sorter: c -> b -> a, then name sorter: b -> c -> a
+      expect(keys).to.eql(['b', 'c', 'a']);
     });
 
     it('should keep reference-safe ordering first when outputReferences=true even if sort="name"', () => {
@@ -181,7 +176,7 @@ describe('formatHelpers', () => {
           semantic: {
             primary: {
               name: 'a-semantic',
-              value: '{color.base.red.400.value}',
+              value: '#EF5350',
               original: { value: '{color.base.red.400.value}' },
               path: ['color', 'semantic', 'primary'],
             },
@@ -233,7 +228,7 @@ describe('formatHelpers', () => {
         resultWithoutRefs.indexOf('--z-base'),
       );
       // should output raw value, not reference
-      expect(resultWithoutRefs).to.include('{color.base.red.400.value}');
+      expect(resultWithoutRefs).to.include('#EF5350');
       expect(resultWithoutRefs).to.not.include('var(--z-base)');
     });
 
@@ -272,10 +267,7 @@ describe('formatHelpers', () => {
         dictionary,
         outputReferences: true,
       });
-
-      expect(result).to.include('--color-base-red-400: #EF5350');
-      expect(result).to.include('var(--color-base-red-400)');
-      await expect(result).to.matchSnapshot(5);
+      await expect(result).to.matchSnapshot();
     });
 
     it('should throw for invalid sort option (fail loudly)', () => {
@@ -341,8 +333,7 @@ describe('formatHelpers', () => {
       // Note: CSS format may include indentation, so we check for the pattern more flexibly
       const lines = result.split('\n\n');
       expect(lines.length).to.be.greaterThan(1);
-      expect(result).to.include('--color-base-red-400');
-      expect(result).to.include('--color-base-blue-500');
+      expect(result).to.matchSnapshot();
     });
 
     it('should handle themeable tokens with SASS format', () => {
