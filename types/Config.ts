@@ -4,7 +4,8 @@ import type { FileHeader, File, FormattingOverrides } from './File.js';
 import type { Parser } from './Parser.js';
 import type { Preprocessor } from './Preprocessor.js';
 import type { Transform } from './Transform.js';
-import type { Format, OutputReferences, SortOption } from './Format.js';
+import type { Format, OutputReferences } from './Format.js';
+import type { SortOption } from './Sort.js';
 import type { Action } from './Action.js';
 import {
   logBrokenReferenceLevels,
