@@ -18,25 +18,25 @@ At this point, you can run `npm run build`. This command will generate the outpu
 
 The "build" command processes the JSON files in the `tokens` folder. The `index.js` file adds each folder, allowing you to map through them in `config.js`. The script goes through each folder and generates a file for each folder and populates it with tokens that match the filter.
 
-```sh
+```json
 # tokens/color/base.json
 {
-   "color": {
-       "red": {
-            "value": "#FF0000"
-        }
-   }
+  "color": {
+    "red": {
+      "value": "#FF0000"
+    }
+  }
 }
 ```
 
-```sh
+```json
 # tokens/size/base.json
 {
-   "size": {
-       "small": {
-            "value": "2px"
-        }
-   }
+  "size": {
+    "small": {
+      "value": "2px"
+    }
+  }
 }
 ```
 
@@ -46,16 +46,18 @@ Because the folder name matches the category, the output would automatically gen
 
 Open the `config.js` file and see how the script first looks within the `tokens` directory to map through each folder. The destination then outputs a file that would match the name, and fill that file with the tokens that match the filter criteria.
 
-```sh
- files: tokens.map(tokenCategory => ({
-          destination: `${tokenCategory}.js`,
-          format: "format/js",
-          filter: {
-            attributes: {
-              category: tokenCategory
-            }
-          }
-        }))
+```js
+{
+  files: tokens.map((tokenCategory) => ({
+    destination: `${tokenCategory}.js`,
+    format: 'format/js',
+    filter: {
+      attributes: {
+        category: tokenCategory,
+      },
+    },
+  }));
+}
 ```
 
 Now each new folder that gets added will automatically generate a corresponding file filled with tokens that match the category!
