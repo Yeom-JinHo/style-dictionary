@@ -1,8 +1,10 @@
 import { expect } from 'chai';
+import { restore, stubMethod } from 'hanbi';
 import StyleDictionary from '../../lib/StyleDictionary.js';
 import { transformMap } from '../../lib/transform/map.js';
 import { stripMeta } from '../../lib/utils/stripMeta.js';
 import groupMessages from '../../lib/utils/groupMessages.js';
+import { StopTransformError } from '../../lib/utils/stopTransformError.js';
 
 const TRANSFORM_ERRORS = groupMessages.GROUP.TransformErrors;
 
@@ -260,6 +262,68 @@ describe('transform', () => {
           .map((m) => m.split('Object.transform')[0])
           .join('\n\n'),
       ).to.matchSnapshot();
+    });
+
+    it('stops the pipeline exactly once for a deferred (referenced) token when a transform throws StopTransformError', async () => {
+      const logStub = stubMethod(console, 'log');
+      try {
+        const sdStop = new StyleDictionary({
+          tokens: {
+            size: {
+              base: { value: 4, type: 'dimension' },
+              ref: { value: '{size.base}', type: 'dimension' },
+            },
+          },
+          platforms: {
+            test: { transforms: ['validate/stop-on-ref'] },
+          },
+        });
+        sdStop.registerTransform({
+          name: 'validate/stop-on-ref',
+          type: 'value',
+          transitive: true,
+          filter: (token) => token.path.includes('ref'),
+          transform: () => {
+            throw new StopTransformError('stop this token');
+          },
+        });
+        const tokens = await sdStop.exportPlatform('test');
+
+        // reference was resolved, but the throwing transform left the value untouched
+        expect(tokens.size.ref.value).to.equal(4);
+        expect(tokens.size.base.value).to.equal(4);
+        // the error is collected and warned about exactly once at the end of the export
+        expect(logStub.callCount).to.equal(1);
+        expect(logStub.firstCall.args[0]).to.include(
+          'Some token transformations (1) could not be applied correctly.',
+        );
+      } finally {
+        restore();
+      }
+    });
+
+    it('rejects at the end of the export when log.warnings is "error" and StopTransformError was thrown', async () => {
+      const sdStop = new StyleDictionary({
+        log: { warnings: 'error' },
+        tokens: {
+          size: {
+            base: { value: 4, type: 'dimension' },
+          },
+        },
+        platforms: {
+          test: { transforms: ['validate/always-stop'] },
+        },
+      });
+      sdStop.registerTransform({
+        name: 'validate/always-stop',
+        type: 'value',
+        transform: () => {
+          throw new StopTransformError('invalid token');
+        },
+      });
+      await expect(sdStop.exportPlatform('test')).to.eventually.be.rejectedWith(
+        'Some token transformations (1) could not be applied correctly.',
+      );
     });
   });
 });

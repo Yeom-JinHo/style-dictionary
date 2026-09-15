@@ -137,3 +137,30 @@ Due to `token.darken` being a property that uses a reference, we need the abilit
 since the transform is the only place where we know which token properties the transformation is reliant upon.
 
 If you want to learn more about transitive transforms, take a look at the [transitive transforms example](https://github.com/style-dictionary/style-dictionary/tree/main/examples/advanced/transitive-transforms).
+
+### Stop the transform pipeline for a token
+
+When a transform throws an error, Style Dictionary collects it, warns about it at the end of the run, and continues applying the remaining transforms to the token, using a sensible fallback value for the failed transform.
+
+If you instead want to stop transforming a token — for example a validation transform detecting an invalid value that later transforms would otherwise obscure — throw a `StopTransformError`:
+
+```js title="build-tokens.js"
+import { StyleDictionary } from 'style-dictionary';
+import { StopTransformError } from 'style-dictionary/utils';
+
+StyleDictionary.registerTransform({
+  name: 'validate/dimension-has-unit',
+  type: transformTypes.value,
+  filter: (token) => token.type === 'dimension',
+  transform: (token) => {
+    if (typeof token.value === 'number') {
+      throw new StopTransformError(`Dimension token must have a unit, got: ${token.value}`);
+    }
+    return token.value;
+  },
+});
+```
+
+No further transforms are applied to that token; it keeps the state it had after the last successfully applied transform. The error is collected and reported like any other transform error, so with [`log.warnings`](/reference/logging/) set to `'error'` it will make the build fail at the end of the run.
+
+Note that for tokens whose value contains references, transforms only run after those references have been resolved, so the thrown error applies to the resolved value.
