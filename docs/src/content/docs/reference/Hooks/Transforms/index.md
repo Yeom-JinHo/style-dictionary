@@ -145,8 +145,9 @@ When a transform throws an error, Style Dictionary collects it, warns about it a
 If you instead want to stop transforming a token — for example a validation transform detecting an invalid value that later transforms would otherwise obscure — throw a `StopTransformError`:
 
 ```js title="build-tokens.js"
-import { StyleDictionary } from 'style-dictionary';
+import StyleDictionary from 'style-dictionary';
 import { StopTransformError } from 'style-dictionary/utils';
+import { transformTypes } from 'style-dictionary/enums';
 
 StyleDictionary.registerTransform({
   name: 'validate/dimension-has-unit',

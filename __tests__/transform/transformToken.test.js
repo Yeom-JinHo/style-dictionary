@@ -209,6 +209,30 @@ describe('transform', () => {
         expect(laterTransformRan).to.be.false;
         expect(GroupMessages.count(TRANSFORM_ERRORS)).to.equal(1);
       });
+
+      it('propagates errors thrown from a transform filter, StopTransformError included', async () => {
+        await expect(
+          transformToken(
+            { name: 'foo-bar', value: 'abc', path: ['foo', 'bar'], original: { value: 'abc' } },
+            {
+              transforms: [
+                {
+                  type: transformTypeValue,
+                  filter: function () {
+                    throw new StopTransformError('thrown from filter');
+                  },
+                  transform: function () {
+                    return 'def';
+                  },
+                },
+              ],
+            },
+            {},
+          ),
+        ).to.eventually.be.rejectedWith('thrown from filter');
+        // filter errors are not transform errors; nothing is collected
+        expect(GroupMessages.count(TRANSFORM_ERRORS)).to.equal(0);
+      });
     });
 
     // Add more tests
