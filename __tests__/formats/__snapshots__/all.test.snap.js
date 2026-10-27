@@ -1347,28 +1347,6 @@ snapshots["formats all should match json/flat snapshot with fileHeaderTimestamp 
 `;
 /* end snapshot formats all should match json/flat snapshot with fileHeaderTimestamp set */
 
-snapshots["formats all should match sketchPalette snapshot"] = 
-`{
-  "compatibleVersion": "1.0",
-  "pluginVersion": "1.1",
-  "colors": [
-    "#FF0000"
-  ]
-}
-`;
-/* end snapshot formats all should match sketchPalette snapshot */
-
-snapshots["formats all should match sketchPalette snapshot with fileHeaderTimestamp set"] = 
-`{
-  "compatibleVersion": "1.0",
-  "pluginVersion": "1.1",
-  "colors": [
-    "#FF0000"
-  ]
-}
-`;
-/* end snapshot formats all should match sketchPalette snapshot with fileHeaderTimestamp set */
-
 snapshots["formats all should match sketch/palette/v2 snapshot"] = 
 `{
   "compatibleVersion": "2.0",
@@ -1447,4 +1425,26 @@ class {
     static const color_red = #FF0000; /** comment */
 }`;
 /* end snapshot formats all should match flutter/class.dart snapshot with fileHeaderTimestamp set */
+
+snapshots["formats all should match sketch/palette snapshot"] = 
+`{
+  "compatibleVersion": "1.0",
+  "pluginVersion": "1.1",
+  "colors": [
+    "#FF0000"
+  ]
+}
+`;
+/* end snapshot formats all should match sketch/palette snapshot */
+
+snapshots["formats all should match sketch/palette snapshot with fileHeaderTimestamp set"] = 
+`{
+  "compatibleVersion": "1.0",
+  "pluginVersion": "1.1",
+  "colors": [
+    "#FF0000"
+  ]
+}
+`;
+/* end snapshot formats all should match sketch/palette snapshot with fileHeaderTimestamp set */
 
