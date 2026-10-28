@@ -94,5 +94,60 @@ describe('utils', () => {
         });
       });
     });
+
+    it('should not allow prototype pollution by converting to an object with a malicious token.key', () => {
+      // below key would cause prototype pollution via L40-L50 in convertTokenData.js
+      // this key would be dissected into essentially doing obj['__proto__']['a'] assignment
+      convertTokenData([{ key: '{__proto__.a}', value: 'b' }], {
+        output: 'object',
+        usesDtcg: false,
+      });
+      expect({}.a).to.be.undefined;
+      convertTokenData([{ key: '{constructor.prototype.a}', value: 'b' }], {
+        output: 'object',
+        usesDtcg: false,
+      });
+      expect({}.a).to.be.undefined;
+
+      convertTokenData([{ key: '{prototype.a}', value: 'b' }], {
+        output: 'object',
+        usesDtcg: false,
+      });
+      expect({}.a).to.be.undefined;
+
+      convertTokenData([{ key: '{nested.object.constructor.prototype.a}', value: 'b' }], {
+        output: 'object',
+        usesDtcg: false,
+      });
+      expect({}.a).to.be.undefined;
+
+      convertTokenData([{ key: '{nested.object.prototype.a}', value: 'b' }], {
+        output: 'object',
+        usesDtcg: false,
+      });
+      expect({}.a).to.be.undefined;
+
+      convertTokenData([{ key: '{nested.object.__proto__.a}', value: 'b' }], {
+        output: 'object',
+        usesDtcg: false,
+      });
+      expect({}.a).to.be.undefined;
+
+      convertTokenData([{ key: '{a}' }, { key: '{a.__proto__.polluted}', value: 'malicious' }], {
+        output: 'object',
+        usesDtcg: false,
+      });
+      expect({}.polluted).to.be.undefined;
+      convertTokenData([{ key: '{a}' }, { key: '{a.prototype.polluted}', value: 'malicious' }], {
+        output: 'object',
+        usesDtcg: false,
+      });
+      expect({}.polluted).to.be.undefined;
+      convertTokenData([{ key: '{a}' }, { key: '{a.constructor.polluted}', value: 'malicious' }], {
+        output: 'object',
+        usesDtcg: false,
+      });
+      expect({}.polluted).to.be.undefined;
+    });
   });
 });

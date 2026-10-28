@@ -1,9 +1,10 @@
 import type { StarlightUserConfig } from '@astrojs/starlight/types';
-import starlightLinksValidator from 'starlight-links-validator';
+// import starlightLinksValidator from 'starlight-links-validator';
 import { pluginLanguageClass } from './expressive-code-plugin-language-class.js';
 
 export default {
-  plugins: [starlightLinksValidator()],
+  // This is broken currently...
+  // plugins: [starlightLinksValidator()],
   expressiveCode: {
     plugins: [
       // Call the plugin initialization function inside the `plugins` array
@@ -41,11 +42,11 @@ export default {
   sidebar: [
     {
       label: 'Getting Started',
-      autogenerate: { directory: 'getting-started' },
+      items: [{ autogenerate: { directory: 'getting-started' } }],
     },
     {
       label: 'More info',
-      autogenerate: { directory: 'info' },
+      items: [{ autogenerate: { directory: 'info' } }],
     },
     {
       label: 'Versions',
@@ -154,7 +155,7 @@ export default {
     },
     {
       label: 'Examples',
-      autogenerate: { directory: 'examples' },
+      items: [{ autogenerate: { directory: 'examples' } }],
     },
   ],
   head: [

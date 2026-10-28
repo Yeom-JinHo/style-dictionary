@@ -11,9 +11,13 @@ describe('common', () => {
       });
 
       it('should recognize arrays consisting out of same-type primitives', () => {
-        expect(getTypeScriptType(['an', 'array', 'of', 'strings'])).to.equal('string[]');
-        expect(getTypeScriptType([3.14159])).to.equal('number[]');
-        expect(getTypeScriptType([true, false, true, true])).to.equal('boolean[]');
+        expect(getTypeScriptType(['an', 'array', 'of', 'strings'])).to.equal(
+          '[string,string,string,string]',
+        );
+        expect(getTypeScriptType([3.14159])).to.equal('[number]');
+        expect(getTypeScriptType([true, false, true, true])).to.equal(
+          '[boolean,boolean,boolean,boolean]',
+        );
       });
 
       it('should recognize arrays consisting out of different primitives', () => {
@@ -28,7 +32,7 @@ describe('common', () => {
             [100, 200],
             [300, 400],
           ]),
-        ).to.equal('number[][]');
+        ).to.equal('[[number,number],[number,number]]');
       });
 
       it('should handle simple object types', () => {
@@ -45,7 +49,7 @@ describe('common', () => {
           property3: { subProperty1: 'foo', subProperty2: ['foo', 'bar', 1] },
         };
         expect(getTypeScriptType(complexObject)).to.equal(
-          '{ property1: string, property2: string[], property3: { subProperty1: string, subProperty2: (string | number)[] } }',
+          '{ property1: string, property2: [string,string], property3: { subProperty1: string, subProperty2: (string | number)[] } }',
         );
       });
 

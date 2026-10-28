@@ -32,6 +32,13 @@ export type { Parser, ParserOptions } from './Parser.js';
 
 export type { Preprocessor } from './Preprocessor.js';
 
+export type {
+  TokenTypeDimension,
+  TokenTypeDimensionUnit,
+  TokenTypeDuration,
+  TokenTypeDurationUnit,
+} from './TokenTypes.js';
+
 export type { Transform, NameTransform, AttributeTransform, ValueTransform } from './Transform.js';
 
 export type { Volume } from './Volume.js';

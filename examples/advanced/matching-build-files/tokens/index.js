@@ -1,4 +1,8 @@
-import { readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
-const dirs = (p) => readdirSync(p).filter((f) => statSync(join(p, f)).isDirectory());
-export default dirs(import.meta.url);
+import { readdirSync } from 'node:fs';
+
+const dirs = (p) =>
+  readdirSync(p, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name);
+
+export default dirs(import.meta.dirname);

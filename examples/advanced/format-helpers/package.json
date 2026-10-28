@@ -2,6 +2,7 @@
   "name": "format-helpers",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "sd.config.js",
   "scripts": {
     "build": "style-dictionary build --config ./sd.config.js"
