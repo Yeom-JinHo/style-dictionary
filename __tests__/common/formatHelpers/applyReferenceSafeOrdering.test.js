@@ -68,12 +68,13 @@ describe('common', () => {
         expect(result.indexOf(tokenB)).to.be.lessThan(result.indexOf(tokenA));
       });
 
-      it('should preserve order when user-sorted order is (c,d,a,b) but references require minimal movement', () => {
+      it('should only move the referencing token, keeping independent tokens in their relative order', () => {
         const tokenB = createToken('token-b', '#111', '#111');
         const tokenA = createToken('token-a', '#111', '{token-b.value}');
         const tokenC = createToken('token-c', '#222', '#222');
         const tokenD = createToken('token-d', '#333', '#333');
 
+        // user order: c, d, a, b — only "a" needs to move (after "b")
         const sortedTokens = [tokenC, tokenD, tokenA, tokenB];
         const tokens = {
           'token-a': tokenA,
@@ -84,32 +85,7 @@ describe('common', () => {
 
         const result = applyReferenceSafeOrdering(sortedTokens, tokens);
 
-        expect(result.indexOf(tokenB)).to.be.lessThan(result.indexOf(tokenA));
-        expect(result.indexOf(tokenC)).to.be.lessThan(result.indexOf(tokenD));
-
-        const cIdx = result.indexOf(tokenC);
-        const dIdx = result.indexOf(tokenD);
-        expect(cIdx).to.be.lessThan(dIdx);
-      });
-
-      it('should preserve relative order of independent tokens', () => {
-        const tokenB = createToken('token-b', '#111', '#111');
-        const tokenA = createToken('token-a', '#111', '{token-b.value}');
-        const tokenC = createToken('token-c', '#222', '#222');
-        const tokenD = createToken('token-d', '#333', '#333');
-
-        const sortedTokens = [tokenC, tokenD, tokenA, tokenB];
-        const tokens = {
-          'token-a': tokenA,
-          'token-b': tokenB,
-          'token-c': tokenC,
-          'token-d': tokenD,
-        };
-
-        const result = applyReferenceSafeOrdering(sortedTokens, tokens);
-
-        expect(result.indexOf(tokenC)).to.be.lessThan(result.indexOf(tokenD));
-        expect(result.indexOf(tokenB)).to.be.lessThan(result.indexOf(tokenA));
+        expect(result).to.eql([tokenC, tokenD, tokenB, tokenA]);
       });
 
       it('should ignore references to tokens not in sortedTokens', () => {
@@ -146,6 +122,21 @@ describe('common', () => {
         expect(result).to.include(tokenA);
         expect(result).to.include(tokenB);
         expect(result).to.eql([tokenA, tokenB]);
+      });
+
+      it('should keep all tokens that share an output name', () => {
+        const base = createToken('base', '#111', '#111');
+        // two tokens collide on the output name "dup" (different paths)
+        const dupA = { ...createToken('dup', '#111', '{base.value}'), path: ['a', 'dup'] };
+        const dupB = { ...createToken('dup', '#222', '#222'), path: ['b', 'dup'] };
+
+        const sortedTokens = [dupA, dupB, base];
+        const tokens = { base, dup: dupA };
+
+        const result = applyReferenceSafeOrdering(sortedTokens, tokens);
+
+        // neither colliding token is dropped, and the group still follows its dependency
+        expect(result).to.eql([base, dupA, dupB]);
       });
 
       it('should handle empty array', () => {
