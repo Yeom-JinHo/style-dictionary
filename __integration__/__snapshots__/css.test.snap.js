@@ -184,7 +184,9 @@ snapshots["integration css css/variables with references should match snapshot"]
 :root {
   --breakpoint-xs: 304px;
   --breakpoint-sm: 768px;
+  --breakpoint-md: calc(var(--breakpoint-xs) / var(--breakpoint-sm));
   --color-core-green-0: #ebf9eb;
+  --color-background-success: var(--color-core-green-0);
   --color-core-green-100: #d7f4d7;
   --color-core-green-200: #c2f2bd;
   --color-core-green-300: #98e58e;
@@ -216,11 +218,13 @@ snapshots["integration css css/variables with references should match snapshot"]
   --color-core-aqua-500: #17b8ce;
   --color-core-aqua-600: #0797ae;
   --color-core-aqua-700: #0b8599;
+  --color-brand-primary: var(--color-core-aqua-700);
   --color-core-aqua-800: #0f6e84;
   --color-core-aqua-900: #035e73;
   --color-core-aqua-1000: #083d4f;
   --color-core-aqua-1100: #002838;
   --color-core-blue-0: #e9f8ff;
+  --color-background-info: var(--color-core-blue-0);
   --color-core-blue-100: #dcf2ff;
   --color-core-blue-200: #c7e4f9;
   --color-core-blue-300: #a1d2f8;
@@ -240,6 +244,7 @@ snapshots["integration css css/variables with references should match snapshot"]
   --color-core-purple-500: #9180f4;
   --color-core-purple-600: #816fea;
   --color-core-purple-700: #6f5ed3;
+  --color-brand-secondary: var(--color-core-purple-700);
   --color-core-purple-800: #5e4eba;
   --color-core-purple-900: #483a9c;
   --color-core-purple-1000: #2d246b;
@@ -269,6 +274,7 @@ snapshots["integration css css/variables with references should match snapshot"]
   --color-core-pink-1000: #561231;
   --color-core-pink-1100: #2b1721;
   --color-core-red-0: #ffeae9;
+  --color-background-danger: var(--color-core-red-0);
   --color-core-red-100: #ffd5d2;
   --color-core-red-200: #ffb8b1;
   --color-core-red-300: #ff9c8f;
@@ -281,6 +287,7 @@ snapshots["integration css css/variables with references should match snapshot"]
   --color-core-red-1000: #6d1313;
   --color-core-red-1100: #2b1111;
   --color-core-orange-0: #ffede3;
+  --color-background-warning: var(--color-core-orange-0);
   --color-core-orange-100: #fcdccc;
   --color-core-orange-200: #ffc6a4;
   --color-core-orange-300: #ffb180;
@@ -293,9 +300,14 @@ snapshots["integration css css/variables with references should match snapshot"]
   --color-core-orange-1000: #601700;
   --color-core-orange-1100: #2d130e;
   --color-core-neutral-0: #ffffff;
+  --color-background-primary: var(--color-core-neutral-0);
   --color-core-neutral-100: #f3f4f4;
+  --color-background-secondary: var(--color-core-neutral-100);
   --color-core-neutral-200: #dee1e1;
+  --color-background-tertiary: var(--color-core-neutral-200);
+  --color-background-disabled: var(--color-background-tertiary);
   --color-core-neutral-300: #c8cccc;
+  --color-border-primary: var(--color-core-neutral-300);
   --color-core-neutral-400: #b0b6b7;
   --color-core-neutral-500: #929a9b;
   --color-core-neutral-600: #6e797a;
@@ -316,6 +328,16 @@ snapshots["integration css css/variables with references should match snapshot"]
   --color-core-yellow-900: #944c0c;
   --color-core-yellow-1000: #542a00;
   --color-core-yellow-1100: #2d1a05;
+  --color-font-primary: var(--color-core-neutral-1100);
+  --color-font-secondary: var(--color-core-neutral-900);
+  --color-font-tertiary: var(--color-core-neutral-800);
+  --color-font-interactive: var(--color-brand-primary);
+  --color-font-interactive-hover: var(--color-brand-primary);
+  --color-font-interactive-active: var(--color-brand-secondary);
+  --color-font-interactive-disabled: var(--color-font-tertiary);
+  --color-font-danger: var(--color-core-red-1000);
+  --color-font-warning: var(--color-core-orange-1000);
+  --color-font-success: var(--color-core-green-1000);
   --size-border-radius-large: 30rem;
   --size-font-small: 0.75rem;
   --size-font-medium: 1rem;
@@ -325,28 +347,6 @@ snapshots["integration css css/variables with references should match snapshot"]
   --size-padding-medium: 1rem;
   --size-padding-large: 1rem;
   --size-padding-xl: 1rem;
-  --breakpoint-md: calc(var(--breakpoint-xs) / var(--breakpoint-sm));
-  --color-background-primary: var(--color-core-neutral-0);
-  --color-background-secondary: var(--color-core-neutral-100);
-  --color-background-tertiary: var(--color-core-neutral-200);
-  --color-background-danger: var(--color-core-red-0);
-  --color-background-warning: var(--color-core-orange-0);
-  --color-background-success: var(--color-core-green-0);
-  --color-background-info: var(--color-core-blue-0);
-  --color-border-primary: var(--color-core-neutral-300);
-  --color-brand-primary: var(--color-core-aqua-700);
-  --color-brand-secondary: var(--color-core-purple-700);
-  --color-font-primary: var(--color-core-neutral-1100);
-  --color-font-secondary: var(--color-core-neutral-900);
-  --color-font-tertiary: var(--color-core-neutral-800);
-  --color-font-danger: var(--color-core-red-1000);
-  --color-font-warning: var(--color-core-orange-1000);
-  --color-font-success: var(--color-core-green-1000);
-  --color-background-disabled: var(--color-background-tertiary);
-  --color-font-interactive: var(--color-brand-primary);
-  --color-font-interactive-hover: var(--color-brand-primary);
-  --color-font-interactive-active: var(--color-brand-secondary);
-  --color-font-interactive-disabled: var(--color-font-tertiary);
 }
 `;
 /* end snapshot integration css css/variables with references should match snapshot */
@@ -534,7 +534,9 @@ snapshots["integration css css/variables with referenceFallbacks should match sn
 :root {
   --breakpoint-xs: 304px;
   --breakpoint-sm: 768px;
+  --breakpoint-md: calc(var(--breakpoint-xs, 304px) / var(--breakpoint-sm, 768px));
   --color-core-green-0: #ebf9eb;
+  --color-background-success: var(--color-core-green-0, #ebf9eb);
   --color-core-green-100: #d7f4d7;
   --color-core-green-200: #c2f2bd;
   --color-core-green-300: #98e58e;
@@ -566,11 +568,13 @@ snapshots["integration css css/variables with referenceFallbacks should match sn
   --color-core-aqua-500: #17b8ce;
   --color-core-aqua-600: #0797ae;
   --color-core-aqua-700: #0b8599;
+  --color-brand-primary: var(--color-core-aqua-700, #0b8599);
   --color-core-aqua-800: #0f6e84;
   --color-core-aqua-900: #035e73;
   --color-core-aqua-1000: #083d4f;
   --color-core-aqua-1100: #002838;
   --color-core-blue-0: #e9f8ff;
+  --color-background-info: var(--color-core-blue-0, #e9f8ff);
   --color-core-blue-100: #dcf2ff;
   --color-core-blue-200: #c7e4f9;
   --color-core-blue-300: #a1d2f8;
@@ -590,6 +594,7 @@ snapshots["integration css css/variables with referenceFallbacks should match sn
   --color-core-purple-500: #9180f4;
   --color-core-purple-600: #816fea;
   --color-core-purple-700: #6f5ed3;
+  --color-brand-secondary: var(--color-core-purple-700, #6f5ed3);
   --color-core-purple-800: #5e4eba;
   --color-core-purple-900: #483a9c;
   --color-core-purple-1000: #2d246b;
@@ -619,6 +624,7 @@ snapshots["integration css css/variables with referenceFallbacks should match sn
   --color-core-pink-1000: #561231;
   --color-core-pink-1100: #2b1721;
   --color-core-red-0: #ffeae9;
+  --color-background-danger: var(--color-core-red-0, #ffeae9);
   --color-core-red-100: #ffd5d2;
   --color-core-red-200: #ffb8b1;
   --color-core-red-300: #ff9c8f;
@@ -631,6 +637,7 @@ snapshots["integration css css/variables with referenceFallbacks should match sn
   --color-core-red-1000: #6d1313;
   --color-core-red-1100: #2b1111;
   --color-core-orange-0: #ffede3;
+  --color-background-warning: var(--color-core-orange-0, #ffede3);
   --color-core-orange-100: #fcdccc;
   --color-core-orange-200: #ffc6a4;
   --color-core-orange-300: #ffb180;
@@ -643,9 +650,14 @@ snapshots["integration css css/variables with referenceFallbacks should match sn
   --color-core-orange-1000: #601700;
   --color-core-orange-1100: #2d130e;
   --color-core-neutral-0: #ffffff;
+  --color-background-primary: var(--color-core-neutral-0, #ffffff);
   --color-core-neutral-100: #f3f4f4;
+  --color-background-secondary: var(--color-core-neutral-100, #f3f4f4);
   --color-core-neutral-200: #dee1e1;
+  --color-background-tertiary: var(--color-core-neutral-200, #dee1e1);
+  --color-background-disabled: var(--color-background-tertiary, #dee1e1);
   --color-core-neutral-300: #c8cccc;
+  --color-border-primary: var(--color-core-neutral-300, #c8cccc);
   --color-core-neutral-400: #b0b6b7;
   --color-core-neutral-500: #929a9b;
   --color-core-neutral-600: #6e797a;
@@ -666,6 +678,16 @@ snapshots["integration css css/variables with referenceFallbacks should match sn
   --color-core-yellow-900: #944c0c;
   --color-core-yellow-1000: #542a00;
   --color-core-yellow-1100: #2d1a05;
+  --color-font-primary: var(--color-core-neutral-1100, #040404);
+  --color-font-secondary: var(--color-core-neutral-900, #273333);
+  --color-font-tertiary: var(--color-core-neutral-800, #364141);
+  --color-font-interactive: var(--color-brand-primary, #0b8599);
+  --color-font-interactive-hover: var(--color-brand-primary, #0b8599);
+  --color-font-interactive-active: var(--color-brand-secondary, #6f5ed3);
+  --color-font-interactive-disabled: var(--color-font-tertiary, #364141);
+  --color-font-danger: var(--color-core-red-1000, #6d1313);
+  --color-font-warning: var(--color-core-orange-1000, #601700);
+  --color-font-success: var(--color-core-green-1000, #08422f);
   --size-border-radius-large: 30rem;
   --size-font-small: 0.75rem;
   --size-font-medium: 1rem;
@@ -675,28 +697,6 @@ snapshots["integration css css/variables with referenceFallbacks should match sn
   --size-padding-medium: 1rem;
   --size-padding-large: 1rem;
   --size-padding-xl: 1rem;
-  --breakpoint-md: calc(var(--breakpoint-xs, 304px) / var(--breakpoint-sm, 768px));
-  --color-background-primary: var(--color-core-neutral-0, #ffffff);
-  --color-background-secondary: var(--color-core-neutral-100, #f3f4f4);
-  --color-background-tertiary: var(--color-core-neutral-200, #dee1e1);
-  --color-background-danger: var(--color-core-red-0, #ffeae9);
-  --color-background-warning: var(--color-core-orange-0, #ffede3);
-  --color-background-success: var(--color-core-green-0, #ebf9eb);
-  --color-background-info: var(--color-core-blue-0, #e9f8ff);
-  --color-border-primary: var(--color-core-neutral-300, #c8cccc);
-  --color-brand-primary: var(--color-core-aqua-700, #0b8599);
-  --color-brand-secondary: var(--color-core-purple-700, #6f5ed3);
-  --color-font-primary: var(--color-core-neutral-1100, #040404);
-  --color-font-secondary: var(--color-core-neutral-900, #273333);
-  --color-font-tertiary: var(--color-core-neutral-800, #364141);
-  --color-font-danger: var(--color-core-red-1000, #6d1313);
-  --color-font-warning: var(--color-core-orange-1000, #601700);
-  --color-font-success: var(--color-core-green-1000, #08422f);
-  --color-background-disabled: var(--color-background-tertiary, #dee1e1);
-  --color-font-interactive: var(--color-brand-primary, #0b8599);
-  --color-font-interactive-hover: var(--color-brand-primary, #0b8599);
-  --color-font-interactive-active: var(--color-brand-secondary, #6f5ed3);
-  --color-font-interactive-disabled: var(--color-font-tertiary, #364141);
 }
 `;
 /* end snapshot integration css css/variables with referenceFallbacks should match snapshot */
