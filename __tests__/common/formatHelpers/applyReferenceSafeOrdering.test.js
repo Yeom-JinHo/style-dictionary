@@ -214,6 +214,43 @@ describe('common', () => {
         expect(result[3]).to.equal(tokenA);
       });
 
+      it('should keep a referencing token in place when its dependency already precedes it', () => {
+        const base = createToken('base', '#111', '#111');
+        const ref = createToken('ref', '#111', '{base.value}');
+        const other = createToken('other', '#222', '#222');
+
+        const sortedTokens = [base, ref, other];
+        const tokens = { base, ref, other };
+
+        const result = applyReferenceSafeOrdering(sortedTokens, tokens);
+
+        // define-before-use is already satisfied, so nothing moves
+        // (a depth-based sorter would move "ref" after "other")
+        expect(result).to.eql([base, ref, other]);
+      });
+
+      it('should only move referencing tokens after their dependencies, keeping everything else in order', () => {
+        // name-sorted input: a -> d, b -> c
+        const tokenA = createToken('a-token', '#333', '{d-token.value}');
+        const tokenB = createToken('b-token', '#222', '{c-token.value}');
+        const tokenC = createToken('c-token', '#222', '#222');
+        const tokenD = createToken('d-token', '#333', '#333');
+
+        const sortedTokens = [tokenA, tokenB, tokenC, tokenD];
+        const tokens = {
+          'a-token': tokenA,
+          'b-token': tokenB,
+          'c-token': tokenC,
+          'd-token': tokenD,
+        };
+
+        const result = applyReferenceSafeOrdering(sortedTokens, tokens);
+
+        // each referencing token is output once its dependency has been,
+        // instead of all referencing tokens being pushed to the end
+        expect(result).to.eql([tokenC, tokenB, tokenD, tokenA]);
+      });
+
       it('should handle complex scenario: 2 base tokens and 2 referencing tokens', () => {
         const base1 = createToken('base-1', '#111', '#111');
         const base2 = createToken('base-2', '#222', '#222');
