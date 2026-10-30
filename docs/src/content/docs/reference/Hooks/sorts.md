@@ -22,7 +22,7 @@ A sort is an object with two props:
   - Positive number if `a` should come after `b`
   - `0` if they are equal
 
-The built-in sort name `name` is reserved and cannot be redefined in `registerSort()` or `hooks.sorts`.
+Registering a sort under the name of a built-in sort (currently only `name`) overrides the built-in, just like other hooks.
 
 The sort function follows the standard JavaScript `Array.sort` comparator pattern.
 

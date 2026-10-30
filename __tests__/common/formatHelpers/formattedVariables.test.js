@@ -314,31 +314,54 @@ describe('formatHelpers', () => {
       expect(String(error)).to.include('Invalid "sort" option type');
     });
 
-    it('should throw when config hooks try to override the reserved built-in "name" sort', () => {
+    it('should resolve a registered sort by name from hooks', () => {
       const dictionary = {
         tokens,
         allTokens: convertTokenData(tokens, { output: 'array' }),
         unfilteredTokens: tokens,
       };
 
-      let error;
-      try {
-        formattedVariables({
-          format: css,
-          dictionary,
-          sort: 'name',
-          hooks: {
-            sorts: {
-              name: (a, b) => b.name.localeCompare(a.name),
-            },
+      const output = formattedVariables({
+        format: css,
+        dictionary,
+        sort: 'reverse',
+        hooks: {
+          sorts: {
+            reverse: (a, b) => b.name.localeCompare(a.name),
           },
-        });
-      } catch (err) {
-        error = err;
-      }
+        },
+      });
 
-      expect(error, 'Expected formattedVariables() to throw').to.exist;
-      expect(String(error)).to.include('"name" is a reserved built-in sort name');
+      expect(output.indexOf('--color-base-red-400')).to.be.lessThan(
+        output.indexOf('--color-base-blue-500'),
+      );
+    });
+
+    it('should let a registered "name" sort in hooks override the built-in one', () => {
+      const dictionary = {
+        tokens,
+        allTokens: convertTokenData(tokens, { output: 'array' }),
+        unfilteredTokens: tokens,
+      };
+
+      const builtIn = formattedVariables({ format: css, dictionary, sort: 'name' });
+      const overridden = formattedVariables({
+        format: css,
+        dictionary,
+        sort: 'name',
+        hooks: {
+          sorts: {
+            name: (a, b) => b.name.localeCompare(a.name),
+          },
+        },
+      });
+
+      expect(builtIn.indexOf('--color-base-blue-500')).to.be.lessThan(
+        builtIn.indexOf('--color-base-red-400'),
+      );
+      expect(overridden.indexOf('--color-base-red-400')).to.be.lessThan(
+        overridden.indexOf('--color-base-blue-500'),
+      );
     });
 
     it('should use custom lineSeparator from formatting options', () => {

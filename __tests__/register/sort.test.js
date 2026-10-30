@@ -104,13 +104,14 @@ describe('register', () => {
       expect(SDE2.hooks.sorts['test-sort-extend']).to.equal(sort.sort);
     });
 
-    it('should error when trying to register a sort with a reserved built-in name', () => {
-      expect(() => {
-        StyleDictionaryExtended.registerSort({
-          name: 'name',
-          sort: (a, b) => a.name.localeCompare(b.name),
-        });
-      }).to.throw('Can\'t register sort; "name" is a reserved built-in sort name');
+    it('should allow overriding the built-in "name" sort like other built-in hooks', () => {
+      const sort = {
+        name: 'name',
+        sort: (a, b) => b.name.localeCompare(a.name),
+      };
+
+      StyleDictionaryExtended.registerSort(sort);
+      expect(StyleDictionaryExtended.hooks.sorts.name).to.equal(sort.sort);
     });
 
     it('should allow overwriting an already registered sort', () => {
