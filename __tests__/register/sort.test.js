@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import StyleDictionary from '../../lib/StyleDictionary.js';
 import { registerSuite } from './register.suite.js';
+import { formats, transformGroups } from '../../lib/enums/index.js';
 
 const configFoo = {
   name: 'foo',
@@ -132,6 +133,57 @@ describe('register', () => {
       StyleDictionaryExtended.registerSort(sort2);
       expect(StyleDictionaryExtended.hooks.sorts['test-overwrite']).to.equal(sort2.sort);
       expect(StyleDictionaryExtended.hooks.sorts['test-overwrite']).to.not.equal(sort1.sort);
+    });
+  });
+
+  describe('sort integration with built-in formats', () => {
+    const tokens = {
+      b: { value: '2', type: 'x' },
+      a: { value: '1', type: 'y' },
+      c: { value: '3', type: 'x' },
+    };
+
+    const byType = (a, b) => a.type.localeCompare(b.type) || a.name.localeCompare(b.name);
+
+    /**
+     * @param {object} [config]
+     * @param {import('../../types/Sort.d.ts').SortOption} [sort]
+     */
+    const build = async (config = {}, sort) => {
+      const sd = new StyleDictionary({
+        tokens,
+        log: { verbosity: 'silent' },
+        ...config,
+        platforms: {
+          css: {
+            transformGroup: transformGroups.css,
+            files: [
+              {
+                destination: 'variables.css',
+                format: formats.cssVariables,
+                options: sort ? { sort } : {},
+              },
+            ],
+          },
+        },
+      });
+      const [file] = await sd.formatPlatform('css');
+      return file.output.match(/--[a-z]+/g);
+    };
+
+    it('should apply a sort registered with registerSort when building css/variables', async () => {
+      StyleDictionary.registerSort({ name: 'by-type', sort: byType });
+      expect(await build({}, 'by-type')).to.eql(['--b', '--c', '--a']);
+      delete StyleDictionary.hooks.sorts['by-type'];
+    });
+
+    it('should apply a sort defined inline in config hooks.sorts', async () => {
+      const reverse = (a, b) => b.name.localeCompare(a.name);
+      expect(await build({ hooks: { sorts: { reverse } } }, 'reverse')).to.eql([
+        '--c',
+        '--b',
+        '--a',
+      ]);
     });
   });
 });
